@@ -4,9 +4,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/theme/app_theme.dart';
-
-// Placeholder for Database initialization
-// import 'features/database/app_database.dart';
+import 'features/home/home_screen.dart';
+import 'features/providers/database_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,15 +13,9 @@ void main() async {
   // Initialize SharedPrefs
   final prefs = await SharedPreferences.getInstance();
   
-  // Initialize Database (will be implemented later)
-  // final database = AppDatabase();
-
   runApp(
-    ProviderScope(
-      overrides: [
-        // databaseProvider.overrideWithValue(database),
-      ],
-      child: const MyApp(),
+    const ProviderScope(
+      child: MyApp(),
     ),
   );
 }
@@ -32,12 +25,15 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Trigger database initialization
+    ref.watch(databaseProvider);
+
     return MaterialApp(
       title: 'دفتر البيت الذكي',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system, // Can be controlled by provider later
+      themeMode: ThemeMode.system,
       
       // Localization Setup
       localizationsDelegates: const [
@@ -50,11 +46,11 @@ class MyApp extends ConsumerWidget {
         Locale('ar', 'YE'), // Default
         Locale('en', ''),
       ],
-      locale: const Locale('ar', 'YE'), // Force Arabic for now, can be dynamic
+      locale: const Locale('ar', 'YE'), // Force Arabic for now
       
       initialRoute: '/',
       routes: {
-        '/': (context) => const Scaffold(body: Center(child: Text('Loading...'))), // Placeholder
+        '/': (context) => const HomeScreen(),
       },
     );
   }
